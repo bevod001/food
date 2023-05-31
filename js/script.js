@@ -157,7 +157,7 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   //Окно само появлется через 5000 мс
-  //let modalTimerId = setTimeout(openModal, 50000);
+  let modalTimerId = setTimeout(openModal, 50000);
 
   //Модальное окно появляется после того, как долистал до конца страницы
   function showModalByScroll() {
@@ -431,6 +431,59 @@ window.addEventListener("DOMContentLoaded", () => {
 
   //Находим offer__slider-inner. он занимает 2600 mpx по ширине.
 
+  /////Делаем точки на слайде/////
+
+  let slider = document.querySelector(".offer__slider"); //для создания точек на слайде
+  slider.style.position = "relative";
+
+  let indicators = document.createElement("ol"); //создаем элемент
+  let dots = []; //создаем для того, чтобы точка стало интерактивной
+
+  indicators.classList.add("carousel-indicators"); //присваеваем ему класс
+
+  slider.append(indicators); //вставляем элемент indicators в slider
+
+  for (let i = 0; i < slides.length; i++) {
+    let dot = document.createElement("li"); //создаем элемент
+    dot.setAttribute("data-slide-to", i + 1); //присваеваем аттрибут data-slide-to
+    dot.style.cssText = `
+      box-sizing: content-box;
+      flex: 0 1 auto;
+      width: 30px;
+      height: 6px;
+      margin-right: 3px;
+      margin-left: 3px;
+      cursor: pointer;
+      background-color: #fff;
+      background-clip: padding-box;
+      border-top: 10px solid transparent;
+      border-bottom: 10px solid transparent;
+      opacity: .5;
+      transition: opacity .6s ease;
+    `; //присваваем стили dot
+
+    if (i == 0) {
+      //устаналиваем индикатор активности
+      dot.style.opacity = 1;
+    }
+    indicators.append(dot); //вставлеям элемент dot в indicators
+    dots.push(dot); //добавляем элемент в массив, который мы сами и создали
+  }
+
+  /////______________________/////
+
+  function changeColorsDots() {
+    dots.forEach((dot) => (dot.style.opacity = ".5")); //перебирает массив и меняет цвет точек на слайдере
+    dots[slideIndex - 1].style.opacity = 1;
+  }
+
+  function addZero() {
+    if (slides.length < 10) {
+      current.textContent = `0${slideIndex}`;
+    } else {
+      current.textContent = slideIndex;
+    }
+  }
   //Блок ответственный за смещение слайдера влево или вправо
   next.addEventListener("click", () => {
     //если мы долистали слайдер до самого конца, то мы возвращаемся в самое начало. Для этого надо видоизменить width, в котором лежит 500 и два символа (px)
@@ -448,11 +501,11 @@ window.addEventListener("DOMContentLoaded", () => {
       slideIndex++;
     }
 
-    if (slides.length < 10) {
-      current.textContent = `0${slideIndex}`;
-    } else {
-      current.textContent = slideIndex;
-    }
+    addZero();
+
+    ////кусочек кода от блока точки на слайду///
+    changeColorsDots();
+    ///_____________///
   });
 
   prev.addEventListener("click", () => {
@@ -469,10 +522,29 @@ window.addEventListener("DOMContentLoaded", () => {
       slideIndex--;
     }
 
-    if (slides.length < 10) {
-      current.textContent = `0${slideIndex}`;
-    } else {
-      current.textContent = slideIndex;
-    }
+    addZero();
+
+    ////кусочек кода от блока точки на слайду///
+    changeColorsDots();
+    ///_____________///
   });
-});
+
+  dots.forEach((dot) => {
+    dot.addEventListener("click", (e) => {
+      let slideTo = e.target.getAttribute("data-slide-to"); //получаем элемент по аттрибуту data-slide-to. Соответственно: 1,2,3 или 4
+
+      slideIndex = slideTo;
+      offset = +width.slice(0, width.length - 2) * (slideTo - 1);
+
+      slidesField.style.transform = `translateX(-${offset}px)`; //команда в которую помещаются данные для движения слайда
+
+      addZero();
+
+      ////кусочек кода от блока точки на слайду///
+      changeColorsDots();
+    });
+  });
+}); 
+//dd//
+
+
