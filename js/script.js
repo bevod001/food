@@ -484,13 +484,18 @@ window.addEventListener("DOMContentLoaded", () => {
       current.textContent = slideIndex;
     }
   }
+
+  //вырезает 'px' из строки 200px
+  function deleteNotDigits(str) {
+    return +str.replace(/\D/g, "");
+  }
   //Блок ответственный за смещение слайдера влево или вправо
   next.addEventListener("click", () => {
     //если мы долистали слайдер до самого конца, то мы возвращаемся в самое начало. Для этого надо видоизменить width, в котором лежит 500 и два символа (px)
-    if (offset == +width.slice(0, width.length - 2) * (slides.length - 1)) {
+    if (offset == deleteNotDigits(width) * (slides.length - 1)) {
       offset = 0;
     } else {
-      offset += +width.slice(0, width.length - 2); //смещение слайда, если он не доходит до конца(границы)
+      offset += deleteNotDigits(width); //смещение слайда, если он не доходит до конца(границы)
     }
     slidesField.style.transform = `translateX(-${offset}px)`; //команда в которую помещаются данные для движения слайда
 
@@ -510,9 +515,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
   prev.addEventListener("click", () => {
     if (offset == 0) {
-      offset = +width.slice(0, width.length - 2) * (slides.length - 1);
+      offset = deleteNotDigits(width) * (slides.length - 1);
     } else {
-      offset -= +width.slice(0, width.length - 2); //смещение слайда, если он не доходит до конца(границы)
+      offset -= deleteNotDigits(width); //смещение слайда, если он не доходит до конца(границы)
     }
     slidesField.style.transform = `translateX(-${offset}px)`; //команда в которую помещаются данные для движения слайда
 
@@ -534,7 +539,7 @@ window.addEventListener("DOMContentLoaded", () => {
       let slideTo = e.target.getAttribute("data-slide-to"); //получаем элемент по аттрибуту data-slide-to. Соответственно: 1,2,3 или 4
 
       slideIndex = slideTo;
-      offset = +width.slice(0, width.length - 2) * (slideTo - 1);
+      offset = deleteNotDigits(width) * (slideTo - 1);
 
       slidesField.style.transform = `translateX(-${offset}px)`; //команда в которую помещаются данные для движения слайда
 
@@ -544,7 +549,5 @@ window.addEventListener("DOMContentLoaded", () => {
       changeColorsDots();
     });
   });
-}); 
+});
 //dd//
-
-
